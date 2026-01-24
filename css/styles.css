@@ -1,6 +1,6 @@
 /* ============================================
-   Temp Inbox - Premium Professional CSS
-   Design Philosophy: Modern, Minimal, Enterprise
+   Temp Inbox - Premium Dark Mode Only
+   Design Philosophy: Modern, Dark, Professional
    ============================================ */
 
 * {
@@ -10,31 +10,32 @@
 }
 
 :root {
-    /* Premium Color Palette */
+    /* Dark Mode Color Palette */
     --primary: #0f172a;
     --primary-light: #1e293b;
+    --primary-lighter: #334155;
     --accent: #3b82f6;
     --accent-dark: #1d4ed8;
     --accent-light: #60a5fa;
     --success: #10b981;
     --warning: #f59e0b;
     --error: #ef4444;
-    --bg: #ffffff;
-    --bg-secondary: #f8fafc;
-    --bg-tertiary: #f1f5f9;
-    --text: #0f172a;
-    --text-secondary: #475569;
-    --text-tertiary: #64748b;
-    --border: #e2e8f0;
-    --border-light: #f1f5f9;
+    --bg: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+    --border: #334155;
+    --border-light: #475569;
     
-    /* Shadows */
-    --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-    --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.1);
-    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1);
-    --shadow-2xl: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+    /* Shadows - Dark Mode */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -65,7 +66,7 @@ html {
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1a1f2e 100%);
     color: var(--text);
     line-height: 1.6;
     overflow-x: hidden;
@@ -89,7 +90,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border);
 }
 
 .header-content {
@@ -107,7 +108,7 @@ body {
     font-weight: 800;
     margin-bottom: var(--spacing-md);
     letter-spacing: -1px;
-    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+    background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -115,9 +116,10 @@ body {
 
 .app-subtitle {
     font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-    opacity: 0.9;
+    opacity: 0.85;
     font-weight: 400;
     letter-spacing: 0.3px;
+    color: var(--text-secondary);
 }
 
 .main-content {
@@ -137,10 +139,10 @@ body {
 
 .footer {
     background: var(--primary);
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-tertiary);
     text-align: center;
     padding: var(--spacing-xl);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--border);
     font-size: 0.875rem;
     margin-top: auto;
 }
@@ -154,7 +156,7 @@ body {
 }
 
 .email-box {
-    background: white;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-lighter) 100%);
     border-radius: var(--radius-2xl);
     padding: var(--spacing-2xl);
     box-shadow: var(--shadow-lg);
@@ -185,7 +187,7 @@ body {
     border-radius: var(--radius-xl);
     font-size: clamp(0.85rem, 2vw, 1rem);
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    background: var(--bg-secondary);
+    background: var(--primary);
     color: var(--text);
     transition: all var(--transition-base);
     cursor: pointer;
@@ -195,18 +197,18 @@ body {
 
 .email-input:hover {
     border-color: var(--accent);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .email-input:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
 }
 
 /* ============================================
-   Buttons - Premium Style
+   Buttons - Premium Dark Style
    ============================================ */
 
 .btn {
@@ -233,7 +235,7 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
     transition: left var(--transition-base);
     z-index: 0;
 }
@@ -263,14 +265,14 @@ body {
 }
 
 .btn-secondary {
-    background: white;
-    color: var(--accent);
+    background: var(--primary-light);
+    color: var(--accent-light);
     border: 2px solid var(--accent);
     box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-    background: var(--bg-secondary);
+    background: var(--primary-lighter);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
@@ -292,8 +294,8 @@ body {
 }
 
 .btn-icon-small:hover {
-    background: var(--bg-tertiary);
-    color: var(--accent);
+    background: var(--primary-lighter);
+    color: var(--accent-light);
     transform: rotate(180deg);
 }
 
@@ -315,7 +317,7 @@ body {
     color: var(--text-secondary);
     text-align: center;
     padding: var(--spacing-lg);
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    background: var(--primary);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     font-weight: 500;
@@ -347,7 +349,7 @@ body {
    ============================================ */
 
 .inbox-section {
-    background: white;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-lighter) 100%);
     border-radius: var(--radius-2xl);
     padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
     box-shadow: var(--shadow-lg);
@@ -371,7 +373,7 @@ body {
     border-radius: var(--radius-lg);
     cursor: pointer;
     transition: all var(--transition-base);
-    background: white;
+    background: var(--primary);
     word-break: break-word;
     position: relative;
     overflow: hidden;
@@ -391,7 +393,7 @@ body {
 }
 
 .email-item:hover {
-    background: var(--bg-secondary);
+    background: var(--primary-light);
     border-color: var(--accent);
     box-shadow: var(--shadow-md);
     transform: translateX(-4px);
@@ -443,7 +445,7 @@ body {
    ============================================ */
 
 .email-viewer-section {
-    background: white;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-lighter) 100%);
     border-radius: var(--radius-2xl);
     padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
     box-shadow: var(--shadow-lg);
@@ -506,7 +508,7 @@ body {
 }
 
 .email-meta strong {
-    color: var(--accent);
+    color: var(--accent-light);
     font-weight: 700;
 }
 
@@ -528,16 +530,16 @@ body {
 }
 
 .body-content a {
-    color: var(--accent);
+    color: var(--accent-light);
     text-decoration: none;
-    border-bottom: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent-light);
     font-weight: 600;
     transition: all var(--transition-fast);
 }
 
 .body-content a:hover {
-    color: var(--accent-dark);
-    border-bottom-color: var(--accent-dark);
+    color: var(--accent);
+    border-bottom-color: var(--accent);
 }
 
 .body-content img {
@@ -598,7 +600,7 @@ body {
 .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--bg-tertiary);
+    border: 3px solid var(--primary-lighter);
     border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -616,8 +618,8 @@ body {
     position: fixed;
     bottom: var(--spacing-lg);
     left: var(--spacing-lg);
-    background: var(--text);
-    color: white;
+    background: var(--primary-light);
+    color: var(--text);
     padding: var(--spacing-lg) var(--spacing-xl);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-2xl);
@@ -639,19 +641,21 @@ body {
 }
 
 .toast.success {
-    background: var(--success);
-    border-left-color: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+    border-left-color: var(--success);
+    color: var(--success);
 }
 
 .toast.error {
-    background: var(--error);
-    border-left-color: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+    border-left-color: var(--error);
+    color: var(--error);
 }
 
 .toast.warning {
-    background: var(--warning);
-    border-left-color: rgba(255, 255, 255, 0.3);
-    color: var(--text);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
+    border-left-color: var(--warning);
+    color: var(--warning);
 }
 
 /* ============================================
@@ -846,7 +850,7 @@ body {
 }
 
 /* ============================================
-   Scrollbar Styling
+   Scrollbar Styling - Dark Mode
    ============================================ */
 
 ::-webkit-scrollbar {
@@ -855,7 +859,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: var(--primary);
     border-radius: 10px;
 }
 
@@ -865,7 +869,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-dark);
+    background: var(--accent-light);
 }
 
 /* ============================================
@@ -880,33 +884,13 @@ body {
     }
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --primary: #0f172a;
-        --primary-light: #1e293b;
-        --bg: #0f172a;
-        --bg-secondary: #1e293b;
-        --bg-tertiary: #334155;
-        --text: #f8fafc;
-        --text-secondary: #cbd5e1;
-        --text-tertiary: #94a3b8;
-        --border: #334155;
-        --border-light: #1e293b;
-    }
-    
-    body {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    }
-    
-    .email-input {
-        background-color: var(--bg-secondary);
-    }
-    
-    .email-item {
-        background-color: var(--bg-secondary);
-    }
-    
-    .email-item:hover {
-        background-color: var(--bg-tertiary);
-    }
+/* Selection Color */
+::selection {
+    background: var(--accent);
+    color: white;
+}
+
+::-moz-selection {
+    background: var(--accent);
+    color: white;
 }

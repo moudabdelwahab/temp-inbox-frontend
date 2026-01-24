@@ -85,8 +85,8 @@ body {
 .header {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     color: white;
-    padding: var(--spacing-3xl) var(--spacing-lg);
-    box-shadow: var(--shadow-xl);
+    padding: var(--spacing-lg) var(--spacing-lg);
+    box-shadow: var(--shadow-md);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -104,10 +104,10 @@ body {
 }
 
 .app-title {
-    font-size: clamp(1.75rem, 5vw, 3rem);
-    font-weight: 800;
-    margin-bottom: var(--spacing-md);
-    letter-spacing: -1px;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    letter-spacing: -0.5px;
     background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -115,16 +115,16 @@ body {
 }
 
 .app-subtitle {
-    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-    opacity: 0.85;
+    font-size: clamp(0.75rem, 2vw, 0.9rem);
+    opacity: 0.8;
     font-weight: 400;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     color: var(--text-secondary);
 }
 
 .main-content {
     flex: 1;
-    padding: var(--spacing-3xl) var(--spacing-lg);
+    padding: var(--spacing-xl) var(--spacing-lg);
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
@@ -132,18 +132,18 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: clamp(var(--spacing-xl), 3vw, var(--spacing-2xl));
-    margin-top: var(--spacing-2xl);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(var(--spacing-lg), 2vw, var(--spacing-xl));
+    margin-top: var(--spacing-lg);
 }
 
 .footer {
     background: var(--primary);
     color: var(--text-tertiary);
     text-align: center;
-    padding: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
     border-top: 1px solid var(--border);
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     margin-top: auto;
 }
 
@@ -152,47 +152,47 @@ body {
    ============================================ */
 
 .email-generator-section {
-    margin-bottom: var(--spacing-3xl);
+    margin-bottom: var(--spacing-xl);
 }
 
 .email-box {
     background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-lighter) 100%);
-    border-radius: var(--radius-2xl);
-    padding: var(--spacing-2xl);
-    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
     border: 1px solid var(--border);
     backdrop-filter: blur(10px);
 }
 
 .email-box h2 {
-    font-size: 1.5rem;
-    margin-bottom: var(--spacing-lg);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-md);
     color: var(--text);
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
 }
 
 .email-display {
     display: flex;
-    gap: clamp(var(--spacing-sm), 2vw, var(--spacing-md));
-    margin-bottom: var(--spacing-lg);
+    gap: clamp(var(--spacing-sm), 1.5vw, var(--spacing-md));
+    margin-bottom: var(--spacing-md);
     flex-wrap: wrap;
 }
 
 .email-input {
     flex: 1;
     min-width: clamp(150px, 80vw, 250px);
-    padding: clamp(var(--spacing-md), 1.5vw, var(--spacing-lg)) clamp(var(--spacing-lg), 2vw, var(--spacing-xl));
-    border: 2px solid var(--border);
-    border-radius: var(--radius-xl);
-    font-size: clamp(0.85rem, 2vw, 1rem);
+    padding: clamp(var(--spacing-sm), 1vw, var(--spacing-md)) clamp(var(--spacing-md), 1.5vw, var(--spacing-lg));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    font-size: clamp(0.8rem, 1.8vw, 0.9rem);
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     background: var(--primary);
     color: var(--text);
     transition: all var(--transition-base);
     cursor: pointer;
     font-weight: 500;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .email-input:hover {
@@ -215,15 +215,15 @@ body {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-sm);
-    padding: clamp(var(--spacing-md), 1.5vw, var(--spacing-lg)) clamp(var(--spacing-lg), 2vw, var(--spacing-xl));
+    padding: clamp(var(--spacing-sm), 1vw, var(--spacing-md)) clamp(var(--spacing-md), 1.5vw, var(--spacing-lg));
     border: none;
-    border-radius: var(--radius-xl);
-    font-size: clamp(0.85rem, 2vw, 1rem);
+    border-radius: var(--radius-lg);
+    font-size: clamp(0.8rem, 1.8vw, 0.9rem);
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-base);
     white-space: nowrap;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     position: relative;
     overflow: hidden;
 }
@@ -313,15 +313,15 @@ body {
    ============================================ */
 
 .email-info {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     text-align: center;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     background: var(--primary);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     border: 1px solid var(--border);
     font-weight: 500;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
 }
 
 /* ============================================
@@ -338,10 +338,10 @@ body {
 }
 
 .section-header h2 {
-    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
     color: var(--text);
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
 }
 
 /* ============================================
@@ -350,14 +350,14 @@ body {
 
 .inbox-section {
     background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-lighter) 100%);
-    border-radius: var(--radius-2xl);
-    padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
-    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-xl);
+    padding: clamp(var(--spacing-md), 2vw, var(--spacing-lg));
+    box-shadow: var(--shadow-md);
     border: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     height: fit-content;
-    max-height: clamp(400px, 60vh, 700px);
+    max-height: clamp(350px, 50vh, 550px);
     overflow-y: auto;
 }
 
@@ -368,9 +368,9 @@ body {
 }
 
 .email-item {
-    padding: clamp(var(--spacing-md), 2vw, var(--spacing-lg));
+    padding: clamp(var(--spacing-sm), 1.5vw, var(--spacing-md));
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     cursor: pointer;
     transition: all var(--transition-base);
     background: var(--primary);
@@ -446,14 +446,14 @@ body {
 
 .email-viewer-section {
     background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-lighter) 100%);
-    border-radius: var(--radius-2xl);
-    padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
-    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-xl);
+    padding: clamp(var(--spacing-md), 2vw, var(--spacing-lg));
+    box-shadow: var(--shadow-md);
     border: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     height: fit-content;
-    max-height: clamp(400px, 60vh, 700px);
+    max-height: clamp(350px, 50vh, 550px);
     overflow-y: auto;
 }
 
@@ -467,10 +467,10 @@ body {
 }
 
 .viewer-header h2 {
-    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
     color: var(--text);
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
 }
 
 .viewer-empty {

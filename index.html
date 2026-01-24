@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temp Inbox - نظام الإيميلات المؤقتة</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1 class="app-title">📧 Temp Inbox</h1>
+                    <p class="app-subtitle">نظام الإيميلات المؤقتة - احصل على إيميل مؤقت فوريًا</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Email Generator Section -->
+            <section class="email-generator-section">
+                <div class="email-box">
+                    <h2>إيميلك المؤقت</h2>
+                    <div class="email-display">
+                        <input 
+                            type="text" 
+                            id="emailInput" 
+                            class="email-input" 
+                            readonly 
+                            placeholder="جاري التحميل..."
+                            aria-label="عنوان البريد الإلكتروني المؤقت"
+                        >
+                        <button id="copyBtn" class="btn btn-primary" title="نسخ الإيميل">
+                            <span class="btn-icon">📋</span>
+                            <span class="btn-text">نسخ</span>
+                        </button>
+                        <button id="refreshBtn" class="btn btn-secondary" title="توليد إيميل جديد">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-text">تحديث</span>
+                        </button>
+                    </div>
+                    <p class="email-info">
+                        <span id="sessionInfo">جاري التحميل...</span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Main Container -->
+            <div class="container">
+                <!-- Inbox Section -->
+                <section class="inbox-section">
+                    <div class="section-header">
+                        <h2>صندوق الوارد</h2>
+                        <button id="refreshInboxBtn" class="btn-icon-small" title="تحديث صندوق الوارد">
+                            🔄
+                        </button>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="loadingState" class="state-container">
+                        <div class="spinner"></div>
+                        <p>جاري تحميل الإيميلات...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="state-container" style="display: none;">
+                        <p class="empty-message">📭 لا توجد إيميلات حتى الآن</p>
+                        <p class="empty-hint">سيتم عرض الإيميلات هنا عند وصولها</p>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="errorState" class="state-container error" style="display: none;">
+                        <p class="error-message">⚠️ حدث خطأ في تحميل الإيميلات</p>
+                        <p id="errorDetails" class="error-details"></p>
+                        <button id="retryBtn" class="btn btn-secondary">إعادة محاولة</button>
+                    </div>
+
+                    <!-- Emails List -->
+                    <div id="emailsList" class="emails-list" style="display: none;">
+                        <!-- Email items will be inserted here -->
+                    </div>
+                </section>
+
+                <!-- Email Viewer Section -->
+                <section class="email-viewer-section">
+                    <div class="viewer-header">
+                        <h2>محتوى الإيميل</h2>
+                        <button id="closeViewerBtn" class="btn-icon-small" title="إغلاق" style="display: none;">
+                            ✕
+                        </button>
+                    </div>
+
+                    <!-- Viewer Empty State -->
+                    <div id="viewerEmpty" class="viewer-empty">
+                        <p>👈 اختر إيميلًا لعرض محتواه</p>
+                    </div>
+
+                    <!-- Viewer Content -->
+                    <div id="viewerContent" class="viewer-content" style="display: none;">
+                        <div class="email-header">
+                            <div class="email-meta">
+                                <p><strong>من:</strong> <span id="viewerFrom"></span></p>
+                                <p><strong>إلى:</strong> <span id="viewerTo"></span></p>
+                                <p><strong>الموضوع:</strong> <span id="viewerSubject"></span></p>
+                                <p><strong>الوقت:</strong> <span id="viewerTime"></span></p>
+                            </div>
+                        </div>
+                        <div class="email-body">
+                            <div id="viewerBody" class="body-content"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2026 Temp Inbox - نظام الإيميلات المؤقتة | مدعوم بـ Supabase</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/session-manager.js"></script>
+    <script src="js/email-manager.js"></script>
+    <script src="js/ui-manager.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

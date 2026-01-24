@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temp Inbox - عرض المشروع</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg: #ffffff;
+            --bg-light: #f9fafb;
+            --bg-dark: #111827;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ============================================
+           Header Section
+           ============================================ */
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        header .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* ============================================
+           Main Content
+           ============================================ */
+
+        main {
+            padding: 60px 20px;
+        }
+
+        section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin: 25px 0 15px 0;
+            color: var(--text);
+        }
+
+        p {
+            color: var(--text-light);
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        /* ============================================
+           Features Grid
+           ============================================ */
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        /* ============================================
+           Statistics Section
+           ============================================ */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* ============================================
+           Charts Section
+           ============================================ */
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .chart-wrapper {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .chart-wrapper h4 {
+            margin-bottom: 20px;
+            color: var(--text);
+            font-size: 1.2rem;
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        /* ============================================
+           Architecture Section
+           ============================================ */
+
+        .architecture {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 40px;
+        }
+
+        .architecture h2 {
+            color: white;
+        }
+
+        .architecture h2::after {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .arch-diagram {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 25px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .arch-diagram pre {
+            color: #a0d995;
+            line-height: 1.8;
+            font-size: 0.9rem;
+        }
+
+        /* ============================================
+           Tech Stack Section
+           ============================================ */
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .tech-item {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
+        }
+
+        .tech-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .tech-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* ============================================
+           Code Example Section
+           ============================================ */
+
+        .code-example {
+            background: var(--bg-dark);
+            color: #a0d995;
+            padding: 25px;
+            border-radius: 15px;
+            overflow-x: auto;
+            margin-top: 25px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           Footer
+           ============================================ */
+
+        footer {
+            background: var(--text);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        /* ============================================
+           Responsive Design
+           ============================================ */
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            section {
+                padding: 25px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .arch-diagram pre {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ============================================
+           Animations
+           ============================================ */
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .feature-card {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="content">
+                <h1>📧 Temp Inbox</h1>
+                <p class="subtitle">نظام احترافي لاستقبال الإيميلات المؤقتة</p>
+                <div class="cta-buttons">
+                    <a href="https://github.com/moudabdelwahab/temp-inbox-frontend" class="btn btn-primary">
+                        🚀 عرض على GitHub
+                    </a>
+                    <a href="https://github.com/moudabdelwahab/temp-inbox-frontend#readme" class="btn btn-secondary">
+                        📖 اقرأ التوثيق
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Overview Section -->
+            <section>
+                <h2>🎯 نظرة عامة على المشروع</h2>
+                <p>
+                    <strong>Temp Inbox</strong> هو تطبيق ويب احترافي يسمح للمستخدمين بالحصول على عناوين بريد إلكترونية مؤقتة فوريًا دون الحاجة إلى إنشاء حساب. يتم توليد عنوان بريد فريد لكل جلسة باستخدام Gmail Plus Addressing (<code>user+RANDOM_ID@gmail.com</code>)، ويتم عرض الإيميلات الواردة في الوقت الفعلي مع تأخير أقصى 10 ثوان.
+                </p>
+                <p>
+                    المشروع مبني بـ <strong>HTML + CSS + JavaScript فقط</strong> (بدون frameworks) مما يجعله سريع جدًا وخفيف الوزن. يتم الربط مع <strong>Supabase</strong> للقراءة فقط، بينما يتولى backend منفصل مسؤولية جلب الإيميلات من Gmail API.
+                </p>
+            </section>
+
+            <!-- Features Section -->
+            <section>
+                <h2>✨ الميزات الرئيسية</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <h4>توليد جلسة فريدة</h4>
+                        <p>معرّف جلسة UUID فريد تلقائيًا مع تخزين آمن في localStorage</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📧</div>
+                        <h4>إيميل مؤقت فوري</h4>
+                        <p>توليد عنوان بريد مؤقت باستخدام Gmail Plus Addressing فوريًا</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h4>تحديثات فورية</h4>
+                        <p>Real-time subscriptions و Polling كـ fallback لضمان التحديثات</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h4>أمان عالي</h4>
+                        <p>Sanitization باستخدام DOMPurify وحماية كاملة من هجمات XSS</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h4>تصميم مستجيب</h4>
+                        <p>دعم كامل للأجهزة المحمولة والأجهزة اللوحية والحواسيب</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <h4>واجهة احترافية</h4>
+                        <p>تصميم حديث مع Dark Mode وتجربة مستخدم ممتازة</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics Section -->
+            <section>
+                <h2>📊 إحصائيات المشروع</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">7</div>
+                        <div class="stat-label">ملفات JavaScript</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">1</div>
+                        <div class="stat-label">ملف HTML</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">1</div>
+                        <div class="stat-label">ملف CSS</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">2600+</div>
+                        <div class="stat-label">سطر كود</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-container">
+                    <div class="chart-wrapper">
+                        <h4>توزيع الملفات</h4>
+                        <canvas id="filesChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <h4>توزيع أسطر الكود</h4>
+                        <canvas id="linesChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Architecture Section -->
+            <section class="architecture">
+                <h2>🏗️ المعمارية</h2>
+                <p>
+                    المشروع يتبع معمارية نظيفة وموضحة بوضوح مع فصل كامل بين المسؤوليات:
+                </p>
+                <div class="arch-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────┐
+│                   Frontend (هذا المشروع)              │
+│                  HTML + CSS + JavaScript             │
+└─────────────────────────────────────────────────────┘
+           │                           │
+           ▼                           ▼
+    ┌──────────────┐         ┌──────────────┐
+    │   Supabase   │         │  localStorage │
+    │   (Read)     │         │  (Session)    │
+    └──────────────┘         └──────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────┐
+│                    Backend (خارج النطاق)             │
+│              Gmail API + Supabase Write              │
+└─────────────────────────────────────────────────────┘
+           │
+           ▼
+    ┌──────────────┐
+    │   Gmail API  │
+    │  (جلب البريد) │
+    └──────────────┘
+                    </pre>
+                </div>
+            </section>
+
+            <!-- Tech Stack Section -->
+            <section>
+                <h2>🛠️ التقنيات المستخدمة</h2>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <div class="tech-icon">🌐</div>
+                        <div class="tech-name">HTML5</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🎨</div>
+                        <div class="tech-name">CSS3</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">⚙️</div>
+                        <div class="tech-name">JavaScript ES6+</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🔗</div>
+                        <div class="tech-name">Supabase</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🛡️</div>
+                        <div class="tech-name">DOMPurify</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">📦</div>
+                        <div class="tech-name">GitHub</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Code Example Section -->
+            <section>
+                <h2>💻 مثال على الكود</h2>
+                <p>إليك مثال على كيفية استخدام واجهات برمجية التطبيق:</p>
+                <div class="code-example">
+<pre>// الوصول إلى معلومات الجلسة
+const sessionInfo = sessionManager.getInfo();
+console.log(sessionInfo);
+// {
+//   sessionId: "550e8400-e29b-41d4-a716-446655440000",
+//   email: "user+550E8400@gmail.com",
+//   ageInMinutes: 5,
+//   isExpired: false
+// }
+
+// جلب الإيميلات
+await emailManager.fetchEmails((emails) => {
+    console.log(`تم جلب ${emails.length} إيميل`);
+});
+
+// نسخ الإيميل
+await copyToClipboard(sessionManager.getEmail());
+
+// عرض إشعار
+uiManager.showToast('تم نسخ الإيميل بنجاح! ✅', 'success');
+
+// الوصول إلى التطبيق من وحدة التحكم
+TempInboxApp.getStatus();
+TempInboxApp.refreshInbox();
+TempInboxApp.copyEmail();</pre>
+                </div>
+            </section>
+
+            <!-- File Structure Section -->
+            <section>
+                <h2>📁 هيكل المشروع</h2>
+                <div class="code-example">
+<pre>temp-inbox-frontend/
+├── index.html                 # الصفحة الرئيسية
+├── css/
+│   └── styles.css            # أنماط CSS احترافية (1000+ سطر)
+├── js/
+│   ├── config.js             # الإعدادات والثوابت
+│   ├── utils.js              # دوال مساعدة (600+ سطر)
+│   ├── supabase-client.js    # عميل Supabase (150+ سطر)
+│   ├── session-manager.js    # إدارة الجلسات (150+ سطر)
+│   ├── email-manager.js      # إدارة الإيميلات (250+ سطر)
+│   ├── ui-manager.js         # إدارة الواجهة (350+ سطر)
+│   └── app.js                # التطبيق الرئيسي (150+ سطر)
+├── README.md                 # توثيق شامل
+└── .gitignore               # ملف تجاهل Git</pre>
+                </div>
+            </section>
+
+            <!-- Key Features Section -->
+            <section>
+                <h2>🎯 الميزات الرئيسية المُنفذة</h2>
+                <h3>✅ إدارة الجلسات</h3>
+                <p>
+                    توليد معرّف جلسة فريد (UUID) تلقائيًا عند تحميل الصفحة، مع تخزينه في localStorage مع انتهاء الصلاحية بعد 24 ساعة. يمكن توليد جلسة جديدة بضغطة زر واحدة.
+                </p>
+
+                <h3>✅ توليد الإيميلات</h3>
+                <p>
+                    توليد عنوان بريد مؤقت باستخدام Gmail Plus Addressing: <code>user+SESSION_ID@gmail.com</code>. يتم عرض الإيميل بوضوح مع أزرار نسخ وتحديث.
+                </p>
+
+                <h3>✅ جلب الإيميلات</h3>
+                <p>
+                    جلب الإيميلات من Supabase كل 5-10 ثوان (Polling)، مع دعم Real-time Subscriptions كـ primary method. الاستقصاء يتكيف تلقائيًا ويتوقف عند عدم وجود تحديثات جديدة.
+                </p>
+
+                <h3>✅ عرض محتوى الإيميل</h3>
+                <p>
+                    عرض محتوى الإيميل الكامل مع تنظيف HTML باستخدام DOMPurify لمنع هجمات XSS. يتم عرض HTML إن وجد، وإلا يتم عرض النص العادي.
+                </p>
+
+                <h3>✅ الأمان</h3>
+                <p>
+                    استخدام DOMPurify لتنظيف محتوى HTML، عدم استخدام <code>dangerouslySetInnerHTML</code>، وتجنب جميع ثغرات XSS الشائعة.
+                </p>
+
+                <h3>✅ التصميم المستجيب</h3>
+                <p>
+                    دعم كامل للأجهزة المحمولة والأجهزة اللوحية والحواسيب، مع تصميم احترافي وحديث يتضمن Dark Mode.
+                </p>
+            </section>
+
+            <!-- Benefits Section -->
+            <section>
+                <h2>🎁 الفوائد الرئيسية</h2>
+                <h3>📊 استكشاف البيانات بطريقة أكثر بديهية</h3>
+                <p>
+                    الواجهة الأمامية توفر طريقة سهلة وبديهية لاستكشاف الإيميلات المستقبلة، مع عرض قائمة الإيميلات وتفاصيلها بشكل منظم وسهل الفهم. يمكن البحث والتصفية بسهولة.
+                </p>
+
+                <h3>📈 فهم الاتجاهات بشكل أفضل</h3>
+                <p>
+                    من خلال عرض الإيميلات بترتيب زمني وتجميعها حسب المرسل والموضوع، يمكن فهم أنماط الإيميلات الواردة والاتجاهات بشكل أفضل. الإحصائيات المرئية توساعد في اتخاذ قرارات أفضل.
+                </p>
+
+                <h3>💾 سهولة الحفظ والمشاركة</h3>
+                <p>
+                    يمكن نسخ عنوان البريد المؤقت بضغطة زر واحدة ومشاركته مع الآخرين. الجلسة تُحفظ تلقائيًا في localStorage، مما يسمح بالعودة إلى نفس الإيميل لاحقًا.
+                </p>
+            </section>
+
+            <!-- Getting Started Section -->
+            <section>
+                <h2>🚀 البدء السريع</h2>
+                <h3>المتطلبات</h3>
+                <p>
+                    متصفح حديث (Chrome, Firefox, Safari, Edge)، اتصال بالإنترنت، ومفاتيح Supabase (URL و API Key).
+                </p>
+
+                <h3>التثبيت</h3>
+                <div class="code-example">
+<pre># 1. استنساخ المشروع
+git clone https://github.com/moudabdelwahab/temp-inbox-frontend.git
+cd temp-inbox-frontend
+
+# 2. تحديث ملف config.js بمفاتيح Supabase
+# قم بتحرير js/config.js وأضف:
+# SUPABASE_URL: 'https://your-project.supabase.co'
+# SUPABASE_KEY: 'your-anon-key'
+
+# 3. تشغيل خادم محلي
+python -m http.server 8000
+# أو
+npx http-server
+
+# 4. الوصول للتطبيق
+# افتح http://localhost:8000 في المتصفح</pre>
+                </div>
+            </section>
+
+            <!-- Links Section -->
+            <section>
+                <h2>🔗 الروابط المهمة</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 25px;">
+                    <div style="background: var(--bg-light); padding: 20px; border-radius: 10px; border-left: 4px solid var(--primary);">
+                        <h4 style="margin-bottom: 10px;">📦 GitHub Repository</h4>
+                        <a href="https://github.com/moudabdelwahab/temp-inbox-frontend" style="color: var(--primary); text-decoration: none; font-weight: 600;">
+                            moudabdelwahab/temp-inbox-frontend →
+                        </a>
+                    </div>
+                    <div style="background: var(--bg-light); padding: 20px; border-radius: 10px; border-left: 4px solid var(--secondary);">
+                        <h4 style="margin-bottom: 10px;">📖 التوثيق</h4>
+                        <a href="https://github.com/moudabdelwahab/temp-inbox-frontend#readme" style="color: var(--secondary); text-decoration: none; font-weight: 600;">
+                            اقرأ README الكامل →
+                        </a>
+                    </div>
+                    <div style="background: var(--bg-light); padding: 20px; border-radius: 10px; border-left: 4px solid var(--success);">
+                        <h4 style="margin-bottom: 10px;">🚀 Supabase</h4>
+                        <a href="https://supabase.com/docs" style="color: var(--success); text-decoration: none; font-weight: 600;">
+                            Supabase Documentation →
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 Temp Inbox - نظام الإيميلات المؤقتة</p>
+            <div class="footer-links">
+                <a href="https://github.com/moudabdelwahab/temp-inbox-frontend">GitHub</a>
+                <a href="https://github.com/moudabdelwahab/temp-inbox-frontend/issues">Issues</a>
+                <a href="https://github.com/moudabdelwahab/temp-inbox-frontend/discussions">Discussions</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Charts Script -->
+    <script>
+        // Files Distribution Chart
+        const filesCtx = document.getElementById('filesChart').getContext('2d');
+        new Chart(filesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['JavaScript', 'CSS', 'HTML'],
+                datasets: [{
+                    data: [7, 1, 1],
+                    backgroundColor: [
+                        '#6366f1',
+                        '#ec4899',
+                        '#10b981'
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { size: 12 },
+                            padding: 15
+                        }
+                    }
+                }
+            }
+        });
+
+        // Lines of Code Chart
+        const linesCtx = document.getElementById('linesChart').getContext('2d');
+        new Chart(linesCtx, {
+            type: 'bar',
+            data: {
+                labels: ['CSS', 'Utils', 'UI Manager', 'Email Manager', 'Session Manager', 'Supabase', 'App', 'Config'],
+                datasets: [{
+                    label: 'أسطر الكود',
+                    data: [1000, 600, 350, 250, 150, 150, 150, 100],
+                    backgroundColor: [
+                        '#6366f1',
+                        '#818cf8',
+                        '#a5b4fc',
+                        '#c7d2fe',
+                        '#dbeafe',
+                        '#bfdbfe',
+                        '#93c5fd',
+                        '#60a5fa'
+                    ],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

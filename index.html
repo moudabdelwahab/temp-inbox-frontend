@@ -15,8 +15,8 @@
         <header class="header">
             <div class="header-content">
                 <div class="logo-section">
-                    <h1 class="app-title">📧 Temp Inbox</h1>
-                    <p class="app-subtitle">نظام الإيميلات المؤقتة - احصل على إيميل مؤقت فوريًا</p>
+                    <h1 class="app-title">Temp Inbox</h1>
+                    <p class="app-subtitle">نظام الإيميلات المؤقتة المتقدم - احصل على عنوان بريد فريد فوريًا</p>
                 </div>
             </div>
         </header>
@@ -26,7 +26,7 @@
             <!-- Email Generator Section -->
             <section class="email-generator-section">
                 <div class="email-box">
-                    <h2>إيميلك المؤقت</h2>
+                    <h2>عنوان بريدك المؤقت</h2>
                     <div class="email-display">
                         <input 
                             type="text" 
@@ -37,11 +37,9 @@
                             aria-label="عنوان البريد الإلكتروني المؤقت"
                         >
                         <button id="copyBtn" class="btn btn-primary" title="نسخ الإيميل">
-                            <span class="btn-icon">📋</span>
                             <span class="btn-text">نسخ</span>
                         </button>
                         <button id="refreshBtn" class="btn btn-secondary" title="توليد إيميل جديد">
-                            <span class="btn-icon">🔄</span>
                             <span class="btn-text">تحديث</span>
                         </button>
                     </div>
@@ -58,7 +56,7 @@
                     <div class="section-header">
                         <h2>صندوق الوارد</h2>
                         <button id="refreshInboxBtn" class="btn-icon-small" title="تحديث صندوق الوارد">
-                            🔄
+                            ↻
                         </button>
                     </div>
                     
@@ -70,13 +68,13 @@
 
                     <!-- Empty State -->
                     <div id="emptyState" class="state-container" style="display: none;">
-                        <p class="empty-message">📭 لا توجد إيميلات حتى الآن</p>
+                        <p class="empty-message">لا توجد إيميلات حتى الآن</p>
                         <p class="empty-hint">سيتم عرض الإيميلات هنا عند وصولها</p>
                     </div>
 
                     <!-- Error State -->
                     <div id="errorState" class="state-container error" style="display: none;">
-                        <p class="error-message">⚠️ حدث خطأ في تحميل الإيميلات</p>
+                        <p class="error-message">حدث خطأ في تحميل الإيميلات</p>
                         <p id="errorDetails" class="error-details"></p>
                         <button id="retryBtn" class="btn btn-secondary">إعادة محاولة</button>
                     </div>
@@ -92,13 +90,13 @@
                     <div class="viewer-header">
                         <h2>محتوى الإيميل</h2>
                         <button id="closeViewerBtn" class="btn-icon-small" title="إغلاق" style="display: none;">
-                            ✕
+                            ×
                         </button>
                     </div>
 
                     <!-- Viewer Empty State -->
                     <div id="viewerEmpty" class="viewer-empty">
-                        <p>👈 اختر إيميلًا لعرض محتواه</p>
+                        <p>اختر إيميلًا لعرض محتواه</p>
                     </div>
 
                     <!-- Viewer Content -->
@@ -121,7 +119,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>© 2026 Temp Inbox - نظام الإيميلات المؤقتة | مدعوم بـ Supabase</p>
+            <p>© 2026 Temp Inbox - نظام الإيميلات المؤقتة المتقدم</p>
         </footer>
     </div>
 

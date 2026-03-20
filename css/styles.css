@@ -18,6 +18,7 @@
     --accent-dark: #1d4ed8;
     --accent-light: #60a5fa;
     --success: #10b981;
+    --success-dark: #059669;
     --warning: #f59e0b;
     --error: #ef4444;
     --bg: #0f172a;
@@ -184,8 +185,41 @@ body {
 
 .email-display {
     display: flex;
+    flex-direction: column;
     gap: clamp(var(--spacing-sm), 1.5vw, var(--spacing-md));
     margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: var(--primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base);
+    overflow: hidden;
+}
+
+.input-group:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.domain-suffix {
+    padding: 0 clamp(var(--spacing-md), 1.5vw, var(--spacing-lg));
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-right: 1px solid var(--border);
+    background-color: rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+}
+
+.button-group {
+    display: flex;
+    gap: clamp(var(--spacing-sm), 1.5vw, var(--spacing-md));
+    justify-content: center;
     flex-wrap: wrap;
 }
 
@@ -285,6 +319,21 @@ body {
     background: var(--primary-lighter);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-success:active {
+    transform: translateY(0);
 }
 
 .btn-icon-small {

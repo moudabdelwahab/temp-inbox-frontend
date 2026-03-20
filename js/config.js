@@ -5,8 +5,9 @@
 
 const CONFIG = {
     // Supabase Configuration
-    SUPABASE_URL: process.env.VITE_FRONTEND_FORGE_API_URL || 'https://your-supabase-url.supabase.co',
-    SUPABASE_KEY: process.env.VITE_FRONTEND_FORGE_API_KEY || 'your-supabase-key',
+    // Use window.location.hostname to detect if we are in a production environment or local
+    SUPABASE_URL: 'https://nfpwuxjstawbctjzwrpv.supabase.co',
+    SUPABASE_KEY: '', // Should be filled with the actual key or handled via env
     
     // Domain Configuration
     DOMAIN: 'mad3oom.online',
@@ -36,13 +37,19 @@ const CONFIG = {
     EMAIL_BODY_MAX_LENGTH: 50000,
 };
 
+// Try to load from environment if available (for build tools like Vite)
+if (typeof process !== 'undefined' && process.env) {
+    if (process.env.VITE_SUPABASE_URL) CONFIG.SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+    if (process.env.VITE_SUPABASE_ANON_KEY) CONFIG.SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+}
+
 // Validate configuration
 function validateConfig() {
     if (!CONFIG.SUPABASE_URL || CONFIG.SUPABASE_URL.includes('your-supabase')) {
-        console.warn('⚠️ Supabase URL not configured. Please set VITE_FRONTEND_FORGE_API_URL');
+        console.warn('⚠️ Supabase URL not configured.');
     }
-    if (!CONFIG.SUPABASE_KEY || CONFIG.SUPABASE_KEY.includes('your-supabase')) {
-        console.warn('⚠️ Supabase Key not configured. Please set VITE_FRONTEND_FORGE_API_KEY');
+    if (!CONFIG.SUPABASE_KEY || CONFIG.SUPABASE_KEY === '') {
+        console.warn('⚠️ Supabase Key is empty. Realtime and fetching might fail.');
     }
 }
 

@@ -17,6 +17,7 @@ class UIManager {
         return {
             // Email display
             emailInput: document.getElementById('emailInput'),
+            selectBtn: document.getElementById('selectBtn'),
             copyBtn: document.getElementById('copyBtn'),
             refreshBtn: document.getElementById('refreshBtn'),
             sessionInfo: document.getElementById('sessionInfo'),
@@ -52,6 +53,7 @@ class UIManager {
      */
     attachEventListeners() {
         // Email display buttons
+        this.elements.selectBtn.addEventListener('click', () => this.handleSelectUsername());
         this.elements.copyBtn.addEventListener('click', () => this.handleCopyEmail());
         this.elements.refreshBtn.addEventListener('click', () => this.handleRefreshSession());
         this.elements.refreshInboxBtn.addEventListener('click', () => this.handleRefreshInbox());
@@ -60,7 +62,6 @@ class UIManager {
         
         // Email input - allow editing
         this.elements.emailInput.addEventListener('focus', () => this.handleEmailInputFocus());
-        this.elements.emailInput.addEventListener('blur', () => this.handleEmailInputBlur());
         this.elements.emailInput.addEventListener('keypress', (e) => this.handleEmailInputKeypress(e));
 
         // Keyboard shortcuts
@@ -73,20 +74,30 @@ class UIManager {
      * Handle email input focus - make it editable
      */
     handleEmailInputFocus() {
-        this.elements.emailInput.removeAttribute('readonly');
         this.elements.emailInput.select();
     }
 
     /**
-     * Handle email input blur - validate and save
+     * Handle email input keypress
      */
-    handleEmailInputBlur() {
+    handleEmailInputKeypress(e) {
+        if (e.key === 'Enter') {
+            this.handleSelectUsername();
+        } else if (e.key === 'Escape') {
+            this.elements.emailInput.blur();
+        }
+    }
+
+    /**
+     * Handle select username button click - validate and set username
+     */
+    async handleSelectUsername() {
         try {
             const input = this.elements.emailInput.value.trim();
             
             if (!input) {
-                this.elements.emailInput.setAttribute('readonly', 'readonly');
-                this.updateEmailDisplay();
+                this.showToast('يرجى إدخال اسم مستخدم ❌', 'error');
+                this.elements.emailInput.focus();
                 return;
             }
 
@@ -99,26 +110,17 @@ class UIManager {
             // Validate and set username
             sessionManager.setUsername(username);
             this.updateEmailDisplay();
-            this.showToast('تم حفظ اسم المستخدم بنجاح! ✅', 'success');
-            this.elements.emailInput.setAttribute('readonly', 'readonly');
+            this.showToast('تم اختيار اسم المستخدم بنجاح! ✅', 'success');
             
-            log(`✅ Username saved: ${username}`);
+            // Initialize email manager after setting username
+            if (app && app.initializeEmailManager) {
+                await app.initializeEmailManager();
+            }
+            
+            log(`✅ Username selected: ${username}`);
         } catch (error) {
             this.showToast(`خطأ: ${error.message} ❌`, 'error');
-            this.updateEmailDisplay();
-            this.elements.emailInput.setAttribute('readonly', 'readonly');
             log(`❌ Error setting username: ${error.message}`, 'error');
-        }
-    }
-
-    /**
-     * Handle email input keypress
-     */
-    handleEmailInputKeypress(e) {
-        if (e.key === 'Enter') {
-            this.handleEmailInputBlur();
-        } else if (e.key === 'Escape') {
-            this.elements.emailInput.blur();
         }
     }
 
@@ -153,6 +155,7 @@ class UIManager {
             this.clearEmailViewer();
             this.showEmptyState();
             this.showToast('تم مسح اسم المستخدم. اختر اسماً جديداً! 🔄', 'success');
+            this.elements.emailInput.focus();
             log('✅ Session cleared');
         } catch (error) {
             this.showToast('فشل مسح الجلسة ❌', 'error');
@@ -228,11 +231,11 @@ class UIManager {
             const info = sessionManager.getInfo();
 
             if (email) {
-                this.elements.emailInput.value = email;
+                this.elements.emailInput.value = email.split('@')[0];
                 this.elements.sessionInfo.textContent = `البريد الإلكتروني: ${email}`;
             } else {
-                this.elements.emailInput.value = 'اختر اسم مستخدم...';
-                this.elements.emailInput.placeholder = 'انقر هنا واكتب اسم مستخدم';
+                this.elements.emailInput.value = '';
+                this.elements.emailInput.placeholder = 'اكتب اسم مستخدم...';
                 this.elements.sessionInfo.textContent = 'لم يتم اختيار اسم مستخدم بعد';
             }
 
@@ -323,25 +326,20 @@ class UIManager {
      */
     displayEmailContent(email) {
         try {
+            // Update viewer content
             this.elements.viewerFrom.textContent = escapeHTML(email.sender || 'Unknown');
-            this.elements.viewerTo.textContent = escapeHTML(email.email || 'Unknown');
-            this.elements.viewerSubject.textContent = escapeHTML(email.body ? email.body.substring(0, 100) : '(No Subject)');
+            this.elements.viewerTo.textContent = escapeHTML(sessionManager.getEmail() || 'Unknown');
+            this.elements.viewerSubject.textContent = escapeHTML(email.subject || '(No Subject)');
             this.elements.viewerTime.textContent = formatDateTime(email.created_at);
+            
+            // Sanitize and display body
+            const sanitizedBody = sanitizeHTML(email.body || '');
+            this.elements.viewerBody.innerHTML = sanitizedBody;
 
-            // Display body content
-            let bodyContent = '';
-            if (email.body) {
-                bodyContent = `<pre>${escapeHTML(email.body)}</pre>`;
-            } else {
-                bodyContent = '<p>No content available</p>';
-            }
-
-            this.elements.viewerBody.innerHTML = bodyContent;
-
-            // Show viewer
+            // Show viewer content, hide empty state
             this.elements.viewerEmpty.style.display = 'none';
             this.elements.viewerContent.style.display = 'flex';
-            this.elements.closeViewerBtn.style.display = 'block';
+            this.elements.closeViewerBtn.style.display = 'flex';
 
             log('✅ Email content displayed');
         } catch (error) {
@@ -355,18 +353,47 @@ class UIManager {
      */
     clearEmailViewer() {
         try {
+            this.elements.viewerEmpty.style.display = 'flex';
+            this.elements.viewerContent.style.display = 'none';
+            this.elements.closeViewerBtn.style.display = 'none';
+            
             document.querySelectorAll('.email-item').forEach(item => {
                 item.classList.remove('active');
             });
 
-            emailManager.clearSelection();
-            this.elements.viewerEmpty.style.display = 'flex';
-            this.elements.viewerContent.style.display = 'none';
-            this.elements.closeViewerBtn.style.display = 'none';
-
             log('✅ Email viewer cleared');
         } catch (error) {
-            log(`❌ Error clearing viewer: ${error.message}`, 'error');
+            log(`❌ Error clearing email viewer: ${error.message}`, 'error');
+        }
+    }
+
+    /**
+     * Show emails list
+     */
+    showEmailsList() {
+        try {
+            this.elements.loadingState.style.display = 'none';
+            this.elements.emptyState.style.display = 'none';
+            this.elements.errorState.style.display = 'none';
+            this.elements.emailsList.style.display = 'flex';
+            log('✅ Emails list shown');
+        } catch (error) {
+            log(`❌ Error showing emails list: ${error.message}`, 'error');
+        }
+    }
+
+    /**
+     * Show empty state
+     */
+    showEmptyState() {
+        try {
+            this.elements.loadingState.style.display = 'none';
+            this.elements.emailsList.style.display = 'none';
+            this.elements.errorState.style.display = 'none';
+            this.elements.emptyState.style.display = 'flex';
+            log('✅ Empty state shown');
+        } catch (error) {
+            log(`❌ Error showing empty state: ${error.message}`, 'error');
         }
     }
 
@@ -374,20 +401,15 @@ class UIManager {
      * Show loading state
      */
     showLoadingState() {
-        this.elements.loadingState.style.display = 'flex';
-        this.elements.emptyState.style.display = 'none';
-        this.elements.errorState.style.display = 'none';
-        this.elements.emailsList.style.display = 'none';
-    }
-
-    /**
-     * Show empty state
-     */
-    showEmptyState() {
-        this.elements.loadingState.style.display = 'none';
-        this.elements.emptyState.style.display = 'flex';
-        this.elements.errorState.style.display = 'none';
-        this.elements.emailsList.style.display = 'none';
+        try {
+            this.elements.emailsList.style.display = 'none';
+            this.elements.emptyState.style.display = 'none';
+            this.elements.errorState.style.display = 'none';
+            this.elements.loadingState.style.display = 'flex';
+            log('✅ Loading state shown');
+        } catch (error) {
+            log(`❌ Error showing loading state: ${error.message}`, 'error');
+        }
     }
 
     /**
@@ -395,26 +417,21 @@ class UIManager {
      * @param {Error} error - Error object
      */
     showErrorState(error) {
-        this.elements.loadingState.style.display = 'none';
-        this.elements.emptyState.style.display = 'none';
-        this.elements.errorState.style.display = 'flex';
-        this.elements.emailsList.style.display = 'none';
-        this.elements.errorDetails.textContent = error.message || 'حدث خطأ غير معروف';
-    }
-
-    /**
-     * Show emails list
-     */
-    showEmailsList() {
-        this.elements.loadingState.style.display = 'none';
-        this.elements.emptyState.style.display = 'none';
-        this.elements.errorState.style.display = 'none';
-        this.elements.emailsList.style.display = 'flex';
+        try {
+            this.elements.loadingState.style.display = 'none';
+            this.elements.emailsList.style.display = 'none';
+            this.elements.emptyState.style.display = 'none';
+            this.elements.errorState.style.display = 'flex';
+            this.elements.errorDetails.textContent = error.message || 'حدث خطأ غير معروف';
+            log('✅ Error state shown');
+        } catch (error) {
+            log(`❌ Error showing error state: ${error.message}`, 'error');
+        }
     }
 
     /**
      * Show toast notification
-     * @param {string} message - Message to display
+     * @param {string} message - Toast message
      * @param {string} type - Toast type (success, error, warning)
      */
     showToast(message, type = 'info') {
@@ -425,29 +442,15 @@ class UIManager {
             setTimeout(() => {
                 this.elements.toast.classList.remove('show');
             }, CONFIG.TOAST_DURATION);
+
+            log(`✅ Toast shown: ${message}`);
         } catch (error) {
             log(`❌ Error showing toast: ${error.message}`, 'error');
         }
-    }
-
-    /**
-     * Disable buttons
-     */
-    disableButtons() {
-        this.elements.copyBtn.disabled = true;
-        this.elements.refreshBtn.disabled = true;
-        this.elements.refreshInboxBtn.disabled = true;
-    }
-
-    /**
-     * Enable buttons
-     */
-    enableButtons() {
-        this.elements.copyBtn.disabled = false;
-        this.elements.refreshBtn.disabled = false;
-        this.elements.refreshInboxBtn.disabled = false;
     }
 }
 
 // Create global instance
 const uiManager = new UIManager();
+
+log('✅ UIManager.js loaded successfully');

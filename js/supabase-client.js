@@ -8,7 +8,29 @@ class SupabaseClient {
         this.client = null;
         this.initialized = false;
         this.subscriptions = [];
-        this.init();
+        this.initPromise = null;
+        this.waitForInit();
+    }
+
+    /**
+     * Wait for Supabase library to load, then initialize
+     */
+    waitForInit() {
+        if (this.initPromise) return this.initPromise;
+        
+        this.initPromise = new Promise((resolve) => {
+            const checkAndInit = () => {
+                if (window.supabase && CONFIG && CONFIG.SUPABASE_URL && CONFIG.SUPABASE_KEY) {
+                    this.init();
+                    resolve();
+                } else {
+                    setTimeout(checkAndInit, 100);
+                }
+            };
+            checkAndInit();
+        });
+        
+        return this.initPromise;
     }
 
     /**
@@ -16,14 +38,17 @@ class SupabaseClient {
      */
     init() {
         try {
-            if (!window.supabase) {
-                log('⏳ Supabase library not loaded yet, waiting...', 'warn');
-                setTimeout(() => this.init(), 500);
+            if (this.initialized && this.client) {
+                log('✅ Supabase client already initialized');
                 return;
             }
 
-            if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY || CONFIG.SUPABASE_KEY === '') {
-                throw new Error('Supabase URL or Key is missing in CONFIG');
+            if (!window.supabase) {
+                throw new Error('Supabase library not loaded');
+            }
+
+            if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) {
+                throw new Error('Supabase configuration is missing');
             }
 
             this.client = window.supabase.createClient(
@@ -36,7 +61,21 @@ class SupabaseClient {
         } catch (error) {
             log(`❌ Failed to initialize Supabase client: ${error.message}`, 'error');
             this.initialized = false;
+            this.client = null;
         }
+    }
+
+    /**
+     * Ensure client is initialized before operations
+     * @returns {Promise<boolean>}
+     */
+    async ensureInitialized() {
+        if (this.isInitialized()) {
+            return true;
+        }
+        
+        await this.waitForInit();
+        return this.isInitialized();
     }
 
     /**
@@ -55,8 +94,9 @@ class SupabaseClient {
      */
     async fetchEmails(email, limit = CONFIG.MAX_EMAILS_DISPLAY) {
         try {
-            if (!this.isInitialized()) {
-                throw new Error('Supabase client not initialized');
+            const initialized = await this.ensureInitialized();
+            if (!initialized) {
+                throw new Error('Supabase client failed to initialize');
             }
 
             if (!email) {
@@ -88,10 +128,11 @@ class SupabaseClient {
      * @param {Function} callback - Callback function when emails change
      * @returns {Function} Unsubscribe function
      */
-    subscribeToEmails(email, callback) {
+    async subscribeToEmails(email, callback) {
         try {
-            if (!this.isInitialized()) {
-                throw new Error('Supabase client not initialized');
+            const initialized = await this.ensureInitialized();
+            if (!initialized) {
+                throw new Error('Supabase client failed to initialize');
             }
 
             if (!email) {
@@ -165,8 +206,9 @@ class SupabaseClient {
      */
     async testConnection() {
         try {
-            if (!this.isInitialized()) {
-                throw new Error('Supabase client not initialized');
+            const initialized = await this.ensureInitialized();
+            if (!initialized) {
+                throw new Error('Supabase client failed to initialize');
             }
 
             const { data, error } = await this.client
@@ -188,3 +230,5 @@ class SupabaseClient {
 
 // Create global instance
 const supabaseClient = new SupabaseClient();
+
+log('✅ SupabaseClient.js loaded successfully');

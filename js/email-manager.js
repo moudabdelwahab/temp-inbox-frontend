@@ -61,9 +61,10 @@ class EmailManager {
                 throw new Error('No active session - please select a username');
             }
 
-            // Check if Supabase is initialized
-            if (!supabaseClient.isInitialized()) {
-                throw new Error('Supabase client not initialized');
+            // Ensure Supabase is initialized
+            const initialized = await supabaseClient.ensureInitialized();
+            if (!initialized) {
+                throw new Error('Supabase client failed to initialize');
             }
 
             const emails = await supabaseClient.fetchEmails(email);
@@ -88,9 +89,10 @@ class EmailManager {
      * @param {Function} onUpdate - Callback on update
      * @param {Function} onError - Callback on error
      */
-    setupRealtimeSubscription(onUpdate, onError) {
+    async setupRealtimeSubscription(onUpdate, onError) {
         try {
-            if (!supabaseClient.isInitialized()) {
+            const initialized = await supabaseClient.ensureInitialized();
+            if (!initialized) {
                 log('⚠️ Supabase not initialized, skipping real-time subscription');
                 return;
             }
@@ -101,7 +103,7 @@ class EmailManager {
                 return;
             }
             
-            this.unsubscribe = supabaseClient.subscribeToEmails(
+            this.unsubscribe = await supabaseClient.subscribeToEmails(
                 email,
                 (payload) => {
                     log(`📬 Real-time update: ${payload.eventType}`);
@@ -249,43 +251,37 @@ class EmailManager {
     }
 
     /**
-     * Cleanup resources
-     */
-    async cleanup() {
-        try {
-            // Stop polling
-            this.pausePolling();
-
-            // Unsubscribe from real-time
-            if (this.unsubscribe) {
-                this.unsubscribe();
-                this.unsubscribe = null;
-            }
-
-            // Cleanup Supabase subscriptions
-            await supabaseClient.cleanup();
-
-            log('✅ Email manager cleaned up');
-        } catch (error) {
-            log(`❌ Error during cleanup: ${error.message}`, 'error');
-        }
-    }
-
-    /**
-     * Get manager stats
-     * @returns {object} Statistics
+     * Get stats
+     * @returns {object} Email manager stats
      */
     getStats() {
         return {
             totalEmails: this.emails.length,
             isLoading: this.isLoading,
             hasError: this.error !== null,
-            selectedEmailId: this.selectedEmailId,
-            lastFetchTime: this.lastFetchTime,
-            isPolling: this.pollingInterval !== null
+            selectedEmailId: this.selectedEmailId
         };
+    }
+
+    /**
+     * Cleanup resources
+     */
+    async cleanup() {
+        try {
+            this.pausePolling();
+            if (this.unsubscribe) {
+                this.unsubscribe();
+            }
+            this.emails = [];
+            this.selectedEmailId = null;
+            log('✅ Email manager cleaned up');
+        } catch (error) {
+            log(`❌ Error during cleanup: ${error.message}`, 'error');
+        }
     }
 }
 
 // Create global instance
 const emailManager = new EmailManager();
+
+log('✅ EmailManager.js loaded successfully');

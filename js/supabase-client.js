@@ -17,7 +17,13 @@ class SupabaseClient {
     init() {
         try {
             if (!window.supabase) {
-                throw new Error('Supabase library not loaded');
+                log('⏳ Supabase library not loaded yet, waiting...', 'warn');
+                setTimeout(() => this.init(), 500);
+                return;
+            }
+
+            if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY || CONFIG.SUPABASE_KEY === '') {
+                throw new Error('Supabase URL or Key is missing in CONFIG');
             }
 
             this.client = window.supabase.createClient(

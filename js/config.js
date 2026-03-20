@@ -5,9 +5,8 @@
 
 const CONFIG = {
     // Supabase Configuration
-    // Use window.location.hostname to detect if we are in a production environment or local
     SUPABASE_URL: 'https://nfpwuxjstawbctjzwrpv.supabase.co',
-    SUPABASE_KEY: '', // Should be filled with the actual key or handled via env
+    SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mcHd1eGpzdGF3YmN0anp3cnB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxOTY2ODYsImV4cCI6MjA4NDc3MjY4Nn0.eLGAKtspeeKBREVK85I7GlJdWRn_UuPgildPDrw_ars',
     
     // Domain Configuration
     DOMAIN: 'mad3oom.online',

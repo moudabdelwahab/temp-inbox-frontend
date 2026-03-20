@@ -172,6 +172,16 @@ body {
     letter-spacing: -0.3px;
 }
 
+.email-hint {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(59, 130, 246, 0.1);
+    border-right: 2px solid var(--accent);
+    border-radius: var(--radius-md);
+}
+
 .email-display {
     display: flex;
     gap: clamp(var(--spacing-sm), 1.5vw, var(--spacing-md));

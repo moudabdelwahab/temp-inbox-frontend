@@ -42,29 +42,33 @@ class SupabaseClient {
     }
 
     /**
-     * Fetch emails for a session
-     * @param {string} sessionId - Session ID
+     * Fetch emails for a specific email address
+     * @param {string} email - Email address to fetch messages for
      * @param {number} limit - Maximum number of emails to fetch
      * @returns {Promise<Array>} Array of emails
      */
-    async fetchEmails(sessionId, limit = CONFIG.MAX_EMAILS_DISPLAY) {
+    async fetchEmails(email, limit = CONFIG.MAX_EMAILS_DISPLAY) {
         try {
             if (!this.isInitialized()) {
                 throw new Error('Supabase client not initialized');
             }
 
+            if (!email) {
+                throw new Error('Email address is required');
+            }
+
             const { data, error } = await this.client
                 .from(CONFIG.EMAILS_TABLE)
                 .select('*')
-                .eq('session_id', sessionId)
-                .order('received_at', { ascending: false })
+                .eq('email', email)
+                .order('created_at', { ascending: false })
                 .limit(limit);
 
             if (error) {
                 throw new Error(`Database error: ${error.message}`);
             }
 
-            log(`✅ Fetched ${data?.length || 0} emails for session ${sessionId}`);
+            log(`✅ Fetched ${data?.length || 0} emails for ${email}`);
             return data || [];
         } catch (error) {
             log(`❌ Error fetching emails: ${error.message}`, 'error');
@@ -74,25 +78,29 @@ class SupabaseClient {
 
     /**
      * Subscribe to real-time email updates
-     * @param {string} sessionId - Session ID
+     * @param {string} email - Email address to subscribe to
      * @param {Function} callback - Callback function when emails change
      * @returns {Function} Unsubscribe function
      */
-    subscribeToEmails(sessionId, callback) {
+    subscribeToEmails(email, callback) {
         try {
             if (!this.isInitialized()) {
                 throw new Error('Supabase client not initialized');
             }
 
+            if (!email) {
+                throw new Error('Email address is required');
+            }
+
             const subscription = this.client
-                .channel(`emails:${sessionId}`)
+                .channel(`emails:${email}`)
                 .on(
                     'postgres_changes',
                     {
                         event: '*',
                         schema: 'public',
                         table: CONFIG.EMAILS_TABLE,
-                        filter: `session_id=eq.${sessionId}`
+                        filter: `email=eq.${email}`
                     },
                     (payload) => {
                         log(`📬 Real-time update received: ${payload.eventType}`);
@@ -104,7 +112,7 @@ class SupabaseClient {
                 });
 
             this.subscriptions.push(subscription);
-            log(`✅ Subscribed to real-time updates for session ${sessionId}`);
+            log(`✅ Subscribed to real-time updates for ${email}`);
 
             // Return unsubscribe function
             return () => this.unsubscribeFromEmails(subscription);

@@ -8,8 +8,8 @@ const CONFIG = {
     SUPABASE_URL: process.env.VITE_FRONTEND_FORGE_API_URL || 'https://your-supabase-url.supabase.co',
     SUPABASE_KEY: process.env.VITE_FRONTEND_FORGE_API_KEY || 'your-supabase-key',
     
-    // Gmail Configuration
-    GMAIL_BASE_EMAIL: 'user@gmail.com',
+    // Domain Configuration
+    DOMAIN: 'mad3oom.online',
     
     // Polling Configuration
     POLLING_INTERVAL: 5000, // 5 seconds
@@ -23,7 +23,13 @@ const CONFIG = {
     TOAST_DURATION: 3000, // 3 seconds
     
     // Database Configuration
-    EMAILS_TABLE: 'emails',
+    EMAILS_TABLE: 'messages',
+    
+    // Username Configuration
+    USERNAME_STORAGE_KEY: 'temp_inbox_username',
+    USERNAME_MIN_LENGTH: 3,
+    USERNAME_MAX_LENGTH: 30,
+    USERNAME_REGEX: /^[a-zA-Z0-9._-]+$/,
     
     // Limits
     MAX_EMAILS_DISPLAY: 50,

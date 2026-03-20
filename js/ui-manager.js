@@ -57,6 +57,11 @@ class UIManager {
         this.elements.refreshInboxBtn.addEventListener('click', () => this.handleRefreshInbox());
         this.elements.retryBtn.addEventListener('click', () => this.handleRetry());
         this.elements.closeViewerBtn.addEventListener('click', () => this.handleCloseViewer());
+        
+        // Email input - allow editing
+        this.elements.emailInput.addEventListener('focus', () => this.handleEmailInputFocus());
+        this.elements.emailInput.addEventListener('blur', () => this.handleEmailInputBlur());
+        this.elements.emailInput.addEventListener('keypress', (e) => this.handleEmailInputKeypress(e));
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
@@ -65,11 +70,69 @@ class UIManager {
     }
 
     /**
+     * Handle email input focus - make it editable
+     */
+    handleEmailInputFocus() {
+        this.elements.emailInput.removeAttribute('readonly');
+        this.elements.emailInput.select();
+    }
+
+    /**
+     * Handle email input blur - validate and save
+     */
+    handleEmailInputBlur() {
+        try {
+            const input = this.elements.emailInput.value.trim();
+            
+            if (!input) {
+                this.elements.emailInput.setAttribute('readonly', 'readonly');
+                this.updateEmailDisplay();
+                return;
+            }
+
+            // Extract username from email if full email was entered
+            let username = input;
+            if (input.includes('@')) {
+                username = input.split('@')[0];
+            }
+
+            // Validate and set username
+            sessionManager.setUsername(username);
+            this.updateEmailDisplay();
+            this.showToast('تم حفظ اسم المستخدم بنجاح! ✅', 'success');
+            this.elements.emailInput.setAttribute('readonly', 'readonly');
+            
+            log(`✅ Username saved: ${username}`);
+        } catch (error) {
+            this.showToast(`خطأ: ${error.message} ❌`, 'error');
+            this.updateEmailDisplay();
+            this.elements.emailInput.setAttribute('readonly', 'readonly');
+            log(`❌ Error setting username: ${error.message}`, 'error');
+        }
+    }
+
+    /**
+     * Handle email input keypress
+     */
+    handleEmailInputKeypress(e) {
+        if (e.key === 'Enter') {
+            this.handleEmailInputBlur();
+        } else if (e.key === 'Escape') {
+            this.elements.emailInput.blur();
+        }
+    }
+
+    /**
      * Handle copy email button click
      */
     async handleCopyEmail() {
         try {
             const email = sessionManager.getEmail();
+            if (!email) {
+                this.showToast('يرجى اختيار اسم مستخدم أولاً ❌', 'error');
+                return;
+            }
+            
             await copyToClipboard(email);
             this.showToast('تم نسخ الإيميل بنجاح! ✅', 'success');
             log('✅ Email copied to clipboard');
@@ -80,18 +143,20 @@ class UIManager {
     }
 
     /**
-     * Handle refresh session button click
+     * Handle refresh session button click - clear username and start fresh
      */
     handleRefreshSession() {
         try {
-            sessionManager.regenerate();
+            sessionManager.clear();
+            emailManager.emails = [];
             this.updateEmailDisplay();
             this.clearEmailViewer();
-            this.showToast('تم توليد إيميل جديد! 🔄', 'success');
-            log('✅ Session refreshed');
+            this.showEmptyState();
+            this.showToast('تم مسح اسم المستخدم. اختر اسماً جديداً! 🔄', 'success');
+            log('✅ Session cleared');
         } catch (error) {
-            this.showToast('فشل توليد إيميل جديد ❌', 'error');
-            log(`❌ Error refreshing session: ${error.message}`, 'error');
+            this.showToast('فشل مسح الجلسة ❌', 'error');
+            log(`❌ Error clearing session: ${error.message}`, 'error');
         }
     }
 
@@ -100,6 +165,12 @@ class UIManager {
      */
     async handleRefreshInbox() {
         try {
+            const email = sessionManager.getEmail();
+            if (!email) {
+                this.showToast('يرجى اختيار اسم مستخدم أولاً ❌', 'error');
+                return;
+            }
+            
             this.showLoadingState();
             await emailManager.fetchEmails((emails) => {
                 this.updateEmailsList(emails);
@@ -130,8 +201,8 @@ class UIManager {
      * @param {KeyboardEvent} e - Keyboard event
      */
     handleKeyboardShortcuts(e) {
-        // Ctrl/Cmd + C: Copy email
-        if ((e.ctrlKey || e.metaKey) && e.key === 'c' && document.activeElement === this.elements.emailInput) {
+        // Ctrl/Cmd + C: Copy email (only if not in input)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'c' && document.activeElement !== this.elements.emailInput) {
             e.preventDefault();
             this.handleCopyEmail();
         }
@@ -156,13 +227,14 @@ class UIManager {
             const email = sessionManager.getEmail();
             const info = sessionManager.getInfo();
 
-            this.elements.emailInput.value = email;
-            
-            const ageText = info.ageInMinutes > 0 
-                ? `قبل ${info.ageInMinutes} دقيقة`
-                : 'الآن';
-            
-            this.elements.sessionInfo.textContent = `معرّف الجلسة: ${info.sessionId.substring(0, 8)}... | العمر: ${ageText}`;
+            if (email) {
+                this.elements.emailInput.value = email;
+                this.elements.sessionInfo.textContent = `البريد الإلكتروني: ${email}`;
+            } else {
+                this.elements.emailInput.value = 'اختر اسم مستخدم...';
+                this.elements.emailInput.placeholder = 'انقر هنا واكتب اسم مستخدم';
+                this.elements.sessionInfo.textContent = 'لم يتم اختيار اسم مستخدم بعد';
+            }
 
             log('✅ Email display updated');
         } catch (error) {
@@ -206,9 +278,9 @@ class UIManager {
         item.className = 'email-item';
         item.dataset.emailId = email.id;
 
-        const from = escapeHTML(email.from_email || 'Unknown');
-        const subject = escapeHTML(email.subject || '(No Subject)');
-        const time = formatDateTime(email.received_at);
+        const from = escapeHTML(email.sender || 'Unknown');
+        const subject = escapeHTML(email.body ? email.body.substring(0, 50) : '(No Subject)');
+        const time = formatDateTime(email.created_at);
 
         item.innerHTML = `
             <div class="email-from">${from}</div>
@@ -251,17 +323,15 @@ class UIManager {
      */
     displayEmailContent(email) {
         try {
-            this.elements.viewerFrom.textContent = escapeHTML(email.from_email || 'Unknown');
-            this.elements.viewerTo.textContent = escapeHTML(email.to_email || 'Unknown');
-            this.elements.viewerSubject.textContent = escapeHTML(email.subject || '(No Subject)');
-            this.elements.viewerTime.textContent = formatDateTime(email.received_at);
+            this.elements.viewerFrom.textContent = escapeHTML(email.sender || 'Unknown');
+            this.elements.viewerTo.textContent = escapeHTML(email.email || 'Unknown');
+            this.elements.viewerSubject.textContent = escapeHTML(email.body ? email.body.substring(0, 100) : '(No Subject)');
+            this.elements.viewerTime.textContent = formatDateTime(email.created_at);
 
             // Display body content
             let bodyContent = '';
-            if (email.body_html) {
-                bodyContent = sanitizeHTML(email.body_html);
-            } else if (email.body_text) {
-                bodyContent = `<pre>${escapeHTML(email.body_text)}</pre>`;
+            if (email.body) {
+                bodyContent = `<pre>${escapeHTML(email.body)}</pre>`;
             } else {
                 bodyContent = '<p>No content available</p>';
             }

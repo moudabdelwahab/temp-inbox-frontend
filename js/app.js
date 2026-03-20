@@ -16,14 +16,19 @@ class App {
         try {
             log('🚀 Starting Temp Inbox application...');
 
-            // Step 1: Initialize session
+            // Step 1: Initialize session (load saved username if exists)
             this.initializeSession();
 
             // Step 2: Update UI with session info
             uiManager.updateEmailDisplay();
 
-            // Step 3: Initialize email manager
-            await this.initializeEmailManager();
+            // Step 3: Initialize email manager if username is set
+            if (sessionManager.isActive()) {
+                await this.initializeEmailManager();
+            } else {
+                log('⚠️ No username set - waiting for user input');
+                uiManager.showEmptyState();
+            }
 
             // Step 4: Setup auto-refresh
             this.setupAutoRefresh();
@@ -45,14 +50,14 @@ class App {
      */
     initializeSession() {
         try {
-            const sessionId = sessionManager.getSessionId();
+            const username = sessionManager.getUsername();
             const email = sessionManager.getEmail();
 
-            if (!sessionId || !email) {
-                throw new Error('Failed to initialize session');
+            if (username && email) {
+                log(`✅ Session loaded: ${username}`);
+            } else {
+                log('ℹ️ No saved session - user needs to select username');
             }
-
-            log(`✅ Session initialized: ${sessionId}`);
         } catch (error) {
             log(`❌ Session initialization failed: ${error.message}`, 'error');
             throw error;
@@ -191,6 +196,17 @@ window.TempInboxApp = {
     copyEmail: () => uiManager.handleCopyEmail(),
     refreshSession: () => uiManager.handleRefreshSession(),
     refreshInbox: () => uiManager.handleRefreshInbox(),
+    setUsername: (username) => {
+        try {
+            sessionManager.setUsername(username);
+            uiManager.updateEmailDisplay();
+            app.initializeEmailManager();
+            return true;
+        } catch (error) {
+            log(`❌ Error setting username: ${error.message}`, 'error');
+            return false;
+        }
+    },
     log: (msg) => log(msg)
 };
 

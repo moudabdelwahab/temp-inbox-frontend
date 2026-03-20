@@ -27,24 +27,25 @@
             <section class="email-generator-section">
                 <div class="email-box">
                     <h2>عنوان بريدك المؤقت</h2>
+                    <p class="email-hint">انقر على الحقل أدناه واكتب اسم مستخدم (مثل: john أو test.user)</p>
                     <div class="email-display">
                         <input 
                             type="text" 
                             id="emailInput" 
                             class="email-input" 
                             readonly 
-                            placeholder="جاري التحميل..."
+                            placeholder="اختر اسم مستخدم..."
                             aria-label="عنوان البريد الإلكتروني المؤقت"
                         >
                         <button id="copyBtn" class="btn btn-primary" title="نسخ الإيميل">
                             <span class="btn-text">نسخ</span>
                         </button>
-                        <button id="refreshBtn" class="btn btn-secondary" title="توليد إيميل جديد">
-                            <span class="btn-text">تحديث</span>
+                        <button id="refreshBtn" class="btn btn-secondary" title="مسح واختيار اسم جديد">
+                            <span class="btn-text">مسح</span>
                         </button>
                     </div>
                     <p class="email-info">
-                        <span id="sessionInfo">جاري التحميل...</span>
+                        <span id="sessionInfo">لم يتم اختيار اسم مستخدم بعد</span>
                     </p>
                 </div>
             </section>

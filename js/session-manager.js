@@ -1,11 +1,11 @@
 /**
  * Session Manager
- * Handles session creation, storage, and email generation
+ * Handles username selection, storage, and email generation
  */
 
 class SessionManager {
     constructor() {
-        this.sessionId = null;
+        this.username = null;
         this.email = null;
         this.createdAt = null;
         this.load();
@@ -16,67 +16,100 @@ class SessionManager {
      */
     load() {
         try {
-            const storedSessionId = getStorageValue(CONFIG.SESSION_STORAGE_KEY);
+            const storedUsername = getStorageValue(CONFIG.USERNAME_STORAGE_KEY);
             
-            if (storedSessionId) {
-                this.sessionId = storedSessionId;
-                this.email = this.generateEmail(storedSessionId);
+            if (storedUsername) {
+                this.username = storedUsername;
+                this.email = this.generateEmail(storedUsername);
                 this.createdAt = new Date();
-                log(`✅ Session loaded from storage: ${this.sessionId}`);
+                log(`✅ Session loaded from storage: ${this.username}`);
             } else {
-                this.create();
+                log('⚠️ No saved username found');
             }
         } catch (error) {
             log(`❌ Error loading session: ${error.message}`, 'error');
-            this.create();
         }
     }
 
     /**
-     * Create a new session
+     * Validate username format
+     * @param {string} username - Username to validate
+     * @returns {object} Validation result {valid: boolean, message: string}
      */
-    create() {
+    validateUsername(username) {
+        if (!username || typeof username !== 'string') {
+            return { valid: false, message: 'اسم المستخدم مطلوب' };
+        }
+
+        const trimmed = username.trim();
+        
+        if (trimmed.length < CONFIG.USERNAME_MIN_LENGTH) {
+            return { valid: false, message: `اسم المستخدم يجب أن يكون ${CONFIG.USERNAME_MIN_LENGTH} أحرف على الأقل` };
+        }
+
+        if (trimmed.length > CONFIG.USERNAME_MAX_LENGTH) {
+            return { valid: false, message: `اسم المستخدم يجب ألا يتجاوز ${CONFIG.USERNAME_MAX_LENGTH} حرف` };
+        }
+
+        if (!CONFIG.USERNAME_REGEX.test(trimmed)) {
+            return { valid: false, message: 'اسم المستخدم يمكن أن يحتوي على أحرف وأرقام والنقاط والشرطات فقط' };
+        }
+
+        return { valid: true, message: 'اسم المستخدم صحيح' };
+    }
+
+    /**
+     * Set username and create session
+     * @param {string} username - Username to set
+     * @returns {boolean} Success status
+     */
+    setUsername(username) {
         try {
-            this.sessionId = generateUUID();
-            this.email = this.generateEmail(this.sessionId);
+            const validation = this.validateUsername(username);
+            if (!validation.valid) {
+                throw new Error(validation.message);
+            }
+
+            const trimmed = username.trim().toLowerCase();
+            this.username = trimmed;
+            this.email = this.generateEmail(trimmed);
             this.createdAt = new Date();
             
-            // Store in localStorage with expiry
+            // Store in localStorage
             setStorageValue(
-                CONFIG.SESSION_STORAGE_KEY,
-                this.sessionId,
+                CONFIG.USERNAME_STORAGE_KEY,
+                trimmed,
                 CONFIG.SESSION_EXPIRY_HOURS
             );
             
-            log(`✅ New session created: ${this.sessionId}`);
+            log(`✅ Username set: ${trimmed}`);
+            return true;
         } catch (error) {
-            log(`❌ Error creating session: ${error.message}`, 'error');
+            log(`❌ Error setting username: ${error.message}`, 'error');
             throw error;
         }
     }
 
     /**
-     * Generate email address from session ID
-     * @param {string} sessionId - Session ID
+     * Generate email address from username
+     * @param {string} username - Username
      * @returns {string} Generated email address
      */
-    generateEmail(sessionId) {
-        const shortId = sessionId.substring(0, 8).toUpperCase();
-        const [localPart, domain] = CONFIG.GMAIL_BASE_EMAIL.split('@');
-        return `${localPart}+${shortId}@${domain}`;
+    generateEmail(username) {
+        return `${username}@${CONFIG.DOMAIN}`;
     }
 
     /**
-     * Get current session ID
-     * @returns {string} Session ID
+     * Get current username
+     * @returns {string} Username or null
      */
-    getSessionId() {
-        return this.sessionId;
+    getUsername() {
+        return this.username;
     }
 
     /**
      * Get current email
-     * @returns {string} Email address
+     * @returns {string} Email address or null
      */
     getEmail() {
         return this.email;
@@ -108,17 +141,11 @@ class SessionManager {
     }
 
     /**
-     * Regenerate session (create new one)
+     * Check if session is active
+     * @returns {boolean} True if username is set
      */
-    regenerate() {
-        try {
-            removeStorageValue(CONFIG.SESSION_STORAGE_KEY);
-            this.create();
-            log('✅ Session regenerated');
-        } catch (error) {
-            log(`❌ Error regenerating session: ${error.message}`, 'error');
-            throw error;
-        }
+    isActive() {
+        return this.username !== null && this.email !== null;
     }
 
     /**
@@ -126,8 +153,8 @@ class SessionManager {
      */
     clear() {
         try {
-            removeStorageValue(CONFIG.SESSION_STORAGE_KEY);
-            this.sessionId = null;
+            removeStorageValue(CONFIG.USERNAME_STORAGE_KEY);
+            this.username = null;
             this.email = null;
             this.createdAt = null;
             log('✅ Session cleared');
@@ -142,11 +169,12 @@ class SessionManager {
      */
     getInfo() {
         return {
-            sessionId: this.sessionId,
+            username: this.username,
             email: this.email,
             createdAt: this.createdAt,
             ageInMinutes: this.getAgeInMinutes(),
             isExpired: this.isExpired(),
+            isActive: this.isActive(),
             expiryHours: CONFIG.SESSION_EXPIRY_HOURS
         };
     }

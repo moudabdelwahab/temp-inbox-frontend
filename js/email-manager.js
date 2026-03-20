@@ -56,9 +56,9 @@ class EmailManager {
             this.error = null;
             this.lastFetchTime = Date.now();
 
-            const sessionId = sessionManager.getSessionId();
-            if (!sessionId) {
-                throw new Error('No active session');
+            const email = sessionManager.getEmail();
+            if (!email) {
+                throw new Error('No active session - please select a username');
             }
 
             // Check if Supabase is initialized
@@ -66,7 +66,7 @@ class EmailManager {
                 throw new Error('Supabase client not initialized');
             }
 
-            const emails = await supabaseClient.fetchEmails(sessionId);
+            const emails = await supabaseClient.fetchEmails(email);
             this.emails = emails;
             this.isLoading = false;
 
@@ -95,10 +95,14 @@ class EmailManager {
                 return;
             }
 
-            const sessionId = sessionManager.getSessionId();
+            const email = sessionManager.getEmail();
+            if (!email) {
+                log('⚠️ No active session, skipping real-time subscription');
+                return;
+            }
             
             this.unsubscribe = supabaseClient.subscribeToEmails(
-                sessionId,
+                email,
                 (payload) => {
                     log(`📬 Real-time update: ${payload.eventType}`);
                     this.fetchEmails(onUpdate);

@@ -281,8 +281,11 @@ class UIManager {
         item.className = 'email-item';
         item.dataset.emailId = email.id;
 
-        const from = escapeHTML(email.sender || 'Unknown');
-        const subject = escapeHTML(email.body ? email.body.substring(0, 50) : '(No Subject)');
+        // Parse email to extract structured data
+        const parsedEmail = EmailParser.parseEmail(email);
+        
+        const from = escapeHTML(parsedEmail.sender || 'Unknown');
+        const subject = escapeHTML(parsedEmail.subject || '(No Subject)');
         const time = formatDateTime(email.created_at);
 
         item.innerHTML = `
@@ -326,14 +329,18 @@ class UIManager {
      */
     displayEmailContent(email) {
         try {
+            // Parse email to extract structured data
+            const parsedEmail = EmailParser.parseEmail(email);
+            
             // Update viewer content
-            this.elements.viewerFrom.textContent = escapeHTML(email.sender || 'Unknown');
+            this.elements.viewerFrom.textContent = escapeHTML(parsedEmail.sender || 'Unknown');
             this.elements.viewerTo.textContent = escapeHTML(sessionManager.getEmail() || 'Unknown');
-            this.elements.viewerSubject.textContent = escapeHTML(email.subject || '(No Subject)');
+            this.elements.viewerSubject.textContent = escapeHTML(parsedEmail.subject || '(No Subject)');
             this.elements.viewerTime.textContent = formatDateTime(email.created_at);
             
-            // Sanitize and display body
-            const sanitizedBody = sanitizeHTML(email.body || '');
+            // Extract and sanitize body content
+            const plainText = EmailParser.extractPlainText(email.body || '');
+            const sanitizedBody = sanitizeHTML(plainText);
             this.elements.viewerBody.innerHTML = sanitizedBody;
 
             // Show viewer content, hide empty state
